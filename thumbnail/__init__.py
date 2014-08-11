@@ -9,7 +9,8 @@ def get_thumbnail(file_, name):
     """
     get_thumbnail version that uses aliasses defined in THUMBNAIL_OPTIONS_DICT
     """
-    options = settings.OPTIONS_DICT[name]
+    options_dict = getattr(file_.instance, 'THUMBNAIL_OPTIONS_DICT', settings.OPTIONS_DICT)
+    options = options_dict[name]
     opt = copy(options)
     geometry = opt.pop('geometry')
 
