@@ -36,6 +36,8 @@ In your `settings.py` add an option called `THUMBNAIL_OPTIONS_DICT`, defining al
 	        }
 	    }
 
+Or you can also define class variable `THUMBNAIL_OPTIONS_DICT` in the model for thumbnails on model basis (see example below). This takes precedence over global settings.
+
 In your models, use `thumbnail.models.AsyncThumbnailMixin` as a baseclass. Make sure that your model inherits
 from AsyncThumbnailMixin first. This will call celery task on save(), and create one or more thumbnails
 from the specified image field. Use class variable `image_field_name` to configure the field that
@@ -51,8 +53,14 @@ Example:
 
 	class Book(AsyncThumbnailMixin, models.Model):
 	    image_field_name = 'cover_image'
+	    THUMBNAIL_OPTIONS_DICT = {
+	        'small': {
+	                'geometry': '140x140',
+	                'crop': 'center'
+	        }
+	    }
 
-		title = models.CharField(blank=False, max_length=255, db_index=True)
+	    title = models.CharField(blank=False, max_length=255, db_index=True)
 	    cover_image = thumbnail.ImageField(upload_to='books/')
 
 In templates:
