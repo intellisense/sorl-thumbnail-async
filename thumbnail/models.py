@@ -16,8 +16,10 @@ class AsyncThumbnailMixin(object):
         for name, options in options_dict.items():
             opt = copy(options)
             geometry = opt.pop('geometry')
-            create_thumbnail.delay(getattr(self, self.image_field_name), geometry, **opt)
+            create_thumbnail.delay(self, getattr(self, self.image_field_name), geometry, **opt)
 
     def save(self, *args, **kwargs):
+        thumbnail_task_completed = kwargs.pop('thumbnail_task_completed', False)
         super(AsyncThumbnailMixin, self).save(*args, **kwargs)
-        self.call_upload_task()
+        if not thumbnail_task_completed:
+            self.call_upload_task()
