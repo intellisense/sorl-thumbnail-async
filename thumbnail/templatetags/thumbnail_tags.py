@@ -16,13 +16,9 @@ class CustomThumbnailNode(ThumbnailNode):
     """ Extends ThumbnailNode to use thumbnail sizes from settings"""
     error_message = ('Please enter sizes defined in settings')
     def __init__(self, parser, token):
-        self.parser = parser
-        self.token = token
         ThumbnailNode.__init__(self, parser, token)
-    
-    def render_(self, context):
         file_ = self.file_.resolve(context)
-        bits = self.token.split_contents()
+        bits = token.split_contents()
         if len(bits) < 5 or bits[-2] != 'as':
             raise TemplateSyntaxError(self.error_msg)
         try:
@@ -32,17 +28,16 @@ class CustomThumbnailNode(ThumbnailNode):
             thumbnail_options = thumbnail_options.split()
         except KeyError:
             raise TemplateSyntaxError(self.error_message)
-        self.geometry = self.parser.compile_filter("'%s'" % thumbnail_options[0])
+        self.geometry = parser.compile_filter("'%s'" % thumbnail_options[0])
         self.options = []
         try:
             m = kw_pat.match(thumbnail_options[1])
             key = smart_str(m.group('key'))
-            expr = self.parser.compile_filter('"%s"' % m.group('value'))
+            expr = parser.compile_filter('"%s"' % m.group('value'))
             self.options.append((key, expr))
         except IndexError:
             pass
         self.as_var = bits[-1]
-        return ThumbnailNode.render_(self, context)
 
 @register.tag
 def thumbnail(parser, token):
